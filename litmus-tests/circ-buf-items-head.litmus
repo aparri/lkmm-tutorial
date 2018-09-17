@@ -1,0 +1,25 @@
+C circ-buf-items-head
+
+{}
+
+P0(int *items, int *head)
+{
+	/* producer() */
+
+	WRITE_ONCE(*items, 1);
+	smp_store_release(head, 1);
+}
+
+P1(int *items, int *head)
+{
+	int r0;
+	int r1;
+
+	/* consumer() */
+
+	r0 = smp_load_acquire(head);
+	if (r0)
+		r1 = READ_ONCE(*items);
+}
+
+exists (1:r0=1 /\ 1:r1=0)

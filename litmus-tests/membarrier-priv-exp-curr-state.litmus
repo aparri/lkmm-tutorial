@@ -1,0 +1,43 @@
+C membarrier-priv-exp-curr-state
+
+{}
+
+P0(atomic_t *state)
+{
+	/* membarrier_register_private_expedited() */
+
+	atomic_add(2, state);	/* set MEMBAR_PRIV_EXP */
+	synchronize_rcu();	/* for synchronize_sched() */
+	atomic_add(1, state);	/* set MEMBAR_PRIV_EXP_READY */
+}
+
+P1(atomic_t *state, int *curr_on_CPU2)
+{
+	int r0;
+	int r1;
+
+	/* membarrier_private_expedited() */
+
+	r0 = atomic_read(state);	/* MEMBAR_PRIV_EXP_READY ? */
+	if (r0 == 3) {
+		smp_mb();	/* full barrier at syscall entry */
+		r1 = READ_ONCE(*curr_on_CPU2);	/* should we IPI CPU2 ? */
+	}
+}
+
+P2(int *curr_on_CPU2, atomic_t *state)
+{
+	int r2;
+
+	/* __schedule() */
+
+	/* __schedule() executes in a preempt-off critical section */
+	rcu_read_lock();
+
+	WRITE_ONCE(*curr_on_CPU2, 1);	/* switch to a fast-path thread */
+	r2 = atomic_read(state);	/* ... MEMBAR_PRIV_EXP ? */
+
+	rcu_read_unlock();
+}
+
+exists (1:r0=3 /\ 1:r1=0 /\ 2:r2=0)

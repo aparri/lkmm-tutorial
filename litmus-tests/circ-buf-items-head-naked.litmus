@@ -1,0 +1,25 @@
+C circ-buf-items-head-naked
+
+{}
+
+P0(int *items, int *head)
+{
+	/* producer() */
+
+	WRITE_ONCE(*items, 1);
+	WRITE_ONCE(*head, 1);
+}
+
+P1(int *items, int *head)
+{
+	int r0;
+	int r1;
+
+	/* consumer() */
+
+	r0 = READ_ONCE(*head);
+	if (r0)
+		r1 = READ_ONCE(*items);
+}
+
+exists (1:r0=1 /\ 1:r1=0)

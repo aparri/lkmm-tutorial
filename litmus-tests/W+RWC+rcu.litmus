@@ -1,0 +1,34 @@
+C W+RWC+rcu
+
+{}
+
+P0(atomic_t *x)
+{
+	atomic_add(2, x);
+	synchronize_rcu();
+	atomic_add(1, x);
+}
+
+P1(atomic_t *x, int *y)
+{
+	int r0;
+	int r1;
+
+	rcu_read_lock();
+	r0 = atomic_read(x);
+	if (r0 == 3)
+		r1 = READ_ONCE(*y);
+	rcu_read_unlock();
+}
+
+P2(int *x, int *y)
+{
+	int r2;
+
+	rcu_read_lock();
+	WRITE_ONCE(*y, 1);
+	r2 = atomic_read(x);
+	rcu_read_unlock();
+}
+
+exists (1:r0=3 /\ 1:r1=0 /\ 2:r2=0)

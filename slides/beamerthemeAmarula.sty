@@ -1,0 +1,27 @@
+\DeclareOptionBeamer{height}{\PassOptionsToPackage{height=#1}{%
+beamerouterthemesidebar}}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+\definecolor{asgold}{RGB}{253,203,11}
+
+\useoutertheme[width=0pt]{sidebar}
+\useinnertheme{rectangles}
+\usecolortheme{whale}
+\usecolortheme{orchid}
+\usecolortheme[named=Black]{structure}
+
+\setbeamercolor*{frametitle}{parent=palette primary,fg=asgold}
+\setbeamerfont{block title}{size={}}
+\setbeamerfont{structure}{family=\sffamily,series=\bfseries,size=\large}
+\setbeamercolor{titlelike}{fg=asgold}
+
+\setbeamertemplate{items}[ball]
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{navigation symbols}{}
+
+\logo{\resizebox{0.6in}{!}{\includegraphics{figures/logo.png}}}
+
+\mode
+<all>

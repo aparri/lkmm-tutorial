@@ -1,0 +1,25 @@
+C SB+lock
+
+{}
+
+P0(int *x, int *y, spinlock_t *s)
+{
+	int r0;
+
+	spin_lock(s);
+	WRITE_ONCE(*x, 1);
+	spin_unlock(s);
+	r0 = READ_ONCE(*y);
+}
+
+P1(int *x, int *y, spinlock_t *s)
+{
+	int r1;
+
+	WRITE_ONCE(*y, 1);
+	spin_lock(s);
+	r1 = READ_ONCE(*x);
+	spin_unlock(s);
+}
+
+exists (0:r0=0 /\ 1:r1=0)

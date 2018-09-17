@@ -1,0 +1,35 @@
+C W+RWC+lock
+
+{}
+
+P0(atomic_t *x, spinlock_t *s)
+{
+	spin_lock(s);
+	atomic_add(2, x);
+	atomic_add(1, x);
+	spin_unlock(s);
+}
+
+P1(atomic_t *x, int *y, spinlock_t *s)
+{
+	int r0;
+	int r1;
+
+	spin_lock(s);
+	r0 = atomic_read(x);
+	if (r0 == 3)
+		r1 = READ_ONCE(*y);
+	spin_unlock(s);
+}
+
+P2(int *x, int *y, spinlock_t *s)
+{
+	int r2;
+
+	spin_lock(s);
+	WRITE_ONCE(*y, 1);
+	r2 = atomic_read(x);
+	spin_unlock(s);
+}
+
+exists (1:r0=3 /\ 1:r1=0 /\ 2:r2=0)

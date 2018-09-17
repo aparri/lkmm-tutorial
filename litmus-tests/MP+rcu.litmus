@@ -1,0 +1,23 @@
+C MP+rcu
+
+{}
+
+P0(int *x, int *y)
+{
+	WRITE_ONCE(*x, 1);
+	synchronize_rcu();
+	WRITE_ONCE(*y, 1);
+}
+
+P1(int *x, int *y)
+{
+	int r0;
+	int r1;
+
+	rcu_read_lock();
+	r1 = READ_ONCE(*x);
+	r0 = READ_ONCE(*y);
+	rcu_read_unlock();
+}
+
+exists (1:r0=1 /\ 1:r1=0)

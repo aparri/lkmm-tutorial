@@ -1,0 +1,22 @@
+C LB+rmwonceonce-poonceonce+ctrlonceonce
+
+{}
+
+P0(int *x, atomic_t *y)
+{
+	int r0;
+
+	r0 = READ_ONCE(*x);
+	if (r0)
+		atomic_set(y, 1);
+}
+
+P1(int *x, atomic_t *y)
+{
+	int r1;
+
+	r1 = atomic_cmpxchg_relaxed(y, 0, 2);
+	WRITE_ONCE(*x, 1);
+}
+
+exists (0:r0=1 /\ 1:r1=1)
