@@ -21,7 +21,7 @@ P1(atomic_t *x, int *y)
 	rcu_read_unlock();
 }
 
-P2(int *x, int *y)
+P2(atomic_t *x, int *y)
 {
 	int r2;
 

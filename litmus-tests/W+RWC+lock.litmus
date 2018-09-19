@@ -22,7 +22,7 @@ P1(atomic_t *x, int *y, spinlock_t *s)
 	spin_unlock(s);
 }
 
-P2(int *x, int *y, spinlock_t *s)
+P2(atomic_t *x, int *y, spinlock_t *s)
 {
 	int r2;
 
